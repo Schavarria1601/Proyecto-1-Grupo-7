@@ -26,7 +26,7 @@ module ClkDivider(
     output reg clk_div
     );
     
-localparam constantNumber = 2; //Alguien que me explique por que esto no funciona
+localparam constantNumber = 1; //Alguien que me explique por que esto no funciona
 
 reg [31:0] count;
  
