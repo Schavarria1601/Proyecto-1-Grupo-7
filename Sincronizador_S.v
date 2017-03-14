@@ -23,7 +23,7 @@
 // de pixeles en un segundo.
 
 module Sincronizador_S(
-      clk,
+      clk_in,
       rst, 
       hsync,
       vsync, 
@@ -35,7 +35,7 @@ module Sincronizador_S(
     );
     
     parameter largo = 10;
-    input wire clk,rst;
+    input wire clk_in,rst;
     output wire hsync, vsync, video_on, p_tick;
     output wire [largo-1:0] pixel_x, pixel_y;
     
@@ -50,8 +50,8 @@ module Sincronizador_S(
     localparam VRetrace = 2;
   
   //contador mod-2
-  //reg mod2_reg;
-  //wire mod2_next;
+  reg mod2_reg;
+  wire mod2_next;
   
   //contadores de sincronizacion
   reg [largo-1:0] h_count_reg, h_count_next;
@@ -63,13 +63,13 @@ module Sincronizador_S(
   //estado de la señal
   wire  h_end, v_end, pixel_tick;
   
-  ClkDivider clkdivider(clk,rst, pixel_tick);
+  //ClkDivider clkdivider(clk,rst, pixel_tick);
   
   //Asignación de Registros
-  always @(posedge clk, posedge rst)
+  always @(posedge clk_in, posedge rst)
   if (rst)//reinicia los valores
     begin
-        //mod2_reg <= 1'b0;
+        mod2_reg <= 1'b0;
         v_count_reg <= 0;
         h_count_reg <= 0;
         v_sync_reg <= 1'b0;
@@ -77,7 +77,7 @@ module Sincronizador_S(
     end
   else 
     begin //Le asignan el valor
-       // mod2_reg <= mod2_next;
+        mod2_reg <= mod2_next;
         v_count_reg <= v_count_next;
         h_count_reg <= h_count_next;
         v_sync_reg <= v_sync_next;
@@ -85,8 +85,8 @@ module Sincronizador_S(
     end    
   
   //Circuito para generar 25Mhz
-  //assign mod2_next = ~mod2_reg;
-  //assign pixel_tick = mod2_reg;
+  assign mod2_next = ~mod2_reg;
+  assign pixel_tick = mod2_reg;
   
   //Estado de señal: termino de recorrido
   //Término de recorrido horizontal (799)
